@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高血压预测系统</title>
+    <script>
+        // 弹窗函数
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .form-group input[type="number"] {
+            flex: 2;
+            padding: 5px;
+        }
+
+        .form-group button {
+            flex: 1;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+        .prediction-level,.prediction-probability{
+            text-align:center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="error-message" style="display: none;">{{ error }}</div>
+    <h1>高血压预测系统</h1>
+    <form action="/predict" method="post">
+        {% for feature in features %}
+        <div class="form-group">
+            <label for="{{ feature }}">{{ feature }}:</label>
+            <input type="number" id="{{ feature }}" name="{{ feature }}" step="0.0001" min="0" required>
+        </div>
+        {% endfor %}
+        <div class="form-group">
+            <button type="submit">Predict</button>
+        </div>
+    </form>
+
+    {% if prediction is defined %}
+
+<!-- <p>您在未来五年内患高血压几率为: {{ prediction }}</p>-->
+    {% if prediction <= 50 %}
+        <h2 class="prediction-level">您在未来五年内患高血压风险等级：低</h2>
+    {% elif prediction > 50 and prediction <= 80 %}
+        <h2 class="prediction-level">您在未来五年内患高血压风险等级：中</h2>
+    {% else %}
+        <h2 class="prediction-level">您在未来五年内患高血压风险等级：高</h2>
+    {% endif %}
+    <p class="prediction-probability">患病几率:{{prediction}}</p>
+{% endif %}
+ <script>
+        // 在页面加载时检查是否有错误消息
+        window.onload = function() {
+            var errorMessage = document.getElementById('error-message').innerText;
+            if (errorMessage !== "") {
+                // 显示错误消息弹窗
+                alert(errorMessage);
+            }
+        };
+    </script>
+</body>
+
+</html>
